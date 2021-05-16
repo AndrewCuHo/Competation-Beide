@@ -1,0 +1,86 @@
+NAME: 'Sleep_scoring.resnext50.SCE.SGD.cosine.RandAugment.50epoch'
+OUTPUT_DIR: './output/'
+SHOW_STEP: 50
+SAVE_STEP: 5
+VALID_STEP: 1
+INPUT_SIZE: 100
+COLOR_SPACE: 'RGB'
+CPU_MODE: True
+
+DATASET:
+  DATASET: 'sleep'
+  IMBALANCECASSAVA:
+    RATIO: 0.02
+
+BACKBONE:
+#  TYPE: 'bbn_res32_cifar'
+#  TYPE: 'bbn_res50'
+#  TYPE: 'bbn_efficientnet-b4'
+  TYPE: 'bbn_resnext50'
+#  TYPE: 'bbn_resnext101'
+
+#  PRETRAINED_MODEL: "./resnet50-19c8e357.pth"
+#  PRETRAINED_MODEL: "../cassava/pretrained_models/efficientnet-b4.pth"
+  PRETRAINED_MODEL: "./best_model.pth"
+#  PRETRAINED_MODEL: "../cassava/pretrained_models/resnext101_32x8d.pth"
+
+
+MODULE:
+  TYPE: 'GAP'
+
+CLASSIFIER:
+  TYPE: 'FC'
+#  TYPE: 'FC2'
+#  TYPE: 'FCNorm'  # for LDAM Loss
+  BIAS: True
+
+LOSS:
+#  LOSS_TYPE: 'CrossEntropy'
+  LOSS_TYPE: 'SymmetricCrossEntropy'
+#  LOSS_TYPE: 'LDAMLoss'
+#  LOSS_TYPE: 'CSCE'
+#  LOSS_TYPE: 'LabelSmoothingCrossEntropy'
+
+TRAIN:
+  BATCH_SIZE: 50
+  MAX_EPOCH: 80
+  NUM_WORKERS: 0
+  COMBINER:
+    TYPE: 'bbn_mix'
+#    TYPE: 'default'
+  OPTIMIZER:
+#    TYPE: 'SGD'
+#    TYPE: 'ADAM'
+#    TYPE: 'RMSprop'
+#    TYPE: 'Radam'
+#    TYPE: 'PlainRAdam'
+    TYPE: 'AdamW'
+    BASE_LR: 0.007
+    MOMENTUM: 0.9
+    WEIGHT_DECAY: 1e-5
+  LR_SCHEDULER:
+#    TYPE: 'cosine'
+    TYPE: 'multistep'
+#    TYPE: 'warmup'
+    LR_STEP: [15, 25]
+    LR_FACTOR: 0.1
+    WARM_EPOCH: 5
+  TENSORBOARD:
+    ENABLE: True
+  SAMPLER:
+    TYPE: 'default'
+#    TYPE: 'weighted sampler'
+    DUAL_SAMPLER:
+      ENABLE: True
+      TYPE: 'reverse'
+#      TYPE: 'balance'
+
+#TRANSFORMS:
+#  TRAIN_TRANSFORMS: ('random_crop', 'random_horizontal_flip')
+#  TEST_TRANSFORMS: ()
+
+TEST:
+  BATCH_SIZE: 10
+  NUM_WORKERS: 0
+  MODEL_FILE: 'E:/competation_Sleep/codes/best_model.pth'
+
